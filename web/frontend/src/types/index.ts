@@ -129,7 +129,7 @@ export interface ChatState {
  * 默认推荐问题列表
  */
 export const RECOMMENDED_QUESTIONS: RecommendedQuestion[] = [
-  { id: '1', question: 'Elefront 怎么烘焙属性？' },
-  { id: '2', question: 'Isotrim 报错怎么办？' },
-  { id: '3', question: '如何生成双曲面分格？' },
+  { id: '1', question: 'Deconstruct Box 这个电池的用法是什么？' },
+  { id: '2', question: 'GH中单轨扫掠失败，但是Rhino当中手工做却可以成功，怎么办？' },
+  { id: '3', question: '需要给若干铝板brep添加25mm折边，且在折边上间距300mm布置角码，怎么操作？' },
 ];
