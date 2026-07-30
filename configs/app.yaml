@@ -1,0 +1,45 @@
+# Grasshopper 技术顾问 - 应用配置
+# 配置加载优先级：.env 环境变量 > app.yaml > 代码默认值
+
+rag:
+  enabled: true
+  interactive: true
+
+embedding:
+  provider: dashscope
+  model: text-embedding-v4
+  dimensions: 1024
+
+rerank:
+  provider: dashscope
+  model: qwen3-vl-rerank
+  threshold: 0.6
+
+paths:
+  data_dir: data
+  rag_dir: data/RAG
+  chroma_dir: data/chroma_db
+  processed_dir: data/processed
+  battery_processed_dir: data/processed/battery
+  manual_processed_dir: data/processed/manual
+
+retrieval:
+  battery_top_k: 10
+  manual_top_k: 10
+  rerank_top_k: 5
+  task_type_overrides:
+    knowledge_query:
+      battery_top_k: 8
+      manual_top_k: 6
+      rerank_top_k: 3
+    fault_diagnosis:
+      battery_top_k: 15
+      manual_top_k: 12
+      rerank_top_k: 6
+  rerank_cache_max_size: 128
+  fallback_min_docs: 3
+  candidate_multiplier: 2
+
+llm:
+  model: deepseek-v4-pro
+  timeout: 120

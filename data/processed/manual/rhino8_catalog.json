@@ -1,0 +1,1438 @@
+{
+  "chapter_count": 179,
+  "chapters": [
+    {
+      "title": "Table of Contents",
+      "level": 1,
+      "page_range": "1-7",
+      "chunk_ids": [
+        "manual:2f186e102127:f61d6c3e:000"
+      ]
+    },
+    {
+      "title": "Rhino commands",
+      "level": 2,
+      "page_range": "9-9",
+      "chunk_ids": [
+        "manual:2f186e102127:97ea061d:003"
+      ]
+    },
+    {
+      "title": "Using templates",
+      "level": 2,
+      "page_range": "10-10",
+      "chunk_ids": [
+        "manual:2f186e102127:151cf1ac:004"
+      ]
+    },
+    {
+      "title": "Start from the menu",
+      "level": 2,
+      "page_range": "10-11",
+      "chunk_ids": [
+        "manual:2f186e102127:0519edc4:005"
+      ]
+    },
+    {
+      "title": "Start from a toolbar icon",
+      "level": 2,
+      "page_range": "12-13",
+      "chunk_ids": [
+        "manual:2f186e102127:39655a13:006"
+      ]
+    },
+    {
+      "title": "Start from the command line",
+      "level": 2,
+      "page_range": "14-15",
+      "chunk_ids": [
+        "manual:2f186e102127:6d984a1e:007"
+      ]
+    },
+    {
+      "title": "Undo a mistake",
+      "level": 2,
+      "page_range": "16-16",
+      "chunk_ids": [
+        "manual:2f186e102127:985bcbb3:008"
+      ]
+    },
+    {
+      "title": "The command window and command prompt",
+      "level": 2,
+      "page_range": "16-16",
+      "chunk_ids": [
+        "manual:2f186e102127:9fcebcf2:009"
+      ]
+    },
+    {
+      "title": "Command options",
+      "level": 2,
+      "page_range": "17-17",
+      "chunk_ids": [
+        "manual:2f186e102127:50c1e984:010"
+      ]
+    },
+    {
+      "title": "Repeat the last command",
+      "level": 2,
+      "page_range": "18-18",
+      "chunk_ids": [
+        "manual:2f186e102127:8c17a39d:011"
+      ]
+    },
+    {
+      "title": "Cancel a command",
+      "level": 2,
+      "page_range": "18-18",
+      "chunk_ids": [
+        "manual:2f186e102127:d9d3a7e6:012"
+      ]
+    },
+    {
+      "title": "Get help any time",
+      "level": 2,
+      "page_range": "19-19",
+      "chunk_ids": [
+        "manual:2f186e102127:7484ccf5:013"
+      ]
+    },
+    {
+      "title": "2 - Rhino Objects",
+      "level": 1,
+      "page_range": "20-20",
+      "chunk_ids": [
+        "manual:2f186e102127:c5879dfc:014"
+      ]
+    },
+    {
+      "title": "Why NURBS modeling",
+      "level": 2,
+      "page_range": "20-20",
+      "chunk_ids": [
+        "manual:2f186e102127:76046252:015"
+      ]
+    },
+    {
+      "title": "Points",
+      "level": 2,
+      "page_range": "20-20",
+      "chunk_ids": [
+        "manual:2f186e102127:277c3231:016"
+      ]
+    },
+    {
+      "title": "Curves",
+      "level": 2,
+      "page_range": "21-21",
+      "chunk_ids": [
+        "manual:2f186e102127:f5452de0:017"
+      ]
+    },
+    {
+      "title": "Surfaces",
+      "level": 2,
+      "page_range": "21-21",
+      "chunk_ids": [
+        "manual:2f186e102127:07a2bc96:018"
+      ]
+    },
+    {
+      "title": "Closed and open surfaces",
+      "level": 3,
+      "page_range": "22-22",
+      "chunk_ids": [
+        "manual:2f186e102127:4a3d41b5:019"
+      ]
+    },
+    {
+      "title": "Trimmed and untrimmed surfaces",
+      "level": 3,
+      "page_range": "22-23",
+      "chunk_ids": [
+        "manual:2f186e102127:09757cf5:020"
+      ]
+    },
+    {
+      "title": "Surface isoparametric and edge curves",
+      "level": 3,
+      "page_range": "24-24",
+      "chunk_ids": [
+        "manual:2f186e102127:76956b2b:021"
+      ]
+    },
+    {
+      "title": "Curve and surface degree",
+      "level": 3,
+      "page_range": "24-25",
+      "chunk_ids": [
+        "manual:2f186e102127:d685a7fe:022"
+      ]
+    },
+    {
+      "title": "Control points",
+      "level": 2,
+      "page_range": "26-26",
+      "chunk_ids": [
+        "manual:2f186e102127:e3d4fc88:023"
+      ]
+    },
+    {
+      "title": "Control point visibility",
+      "level": 3,
+      "page_range": "26-26",
+      "chunk_ids": [
+        "manual:2f186e102127:161f013c:024"
+      ]
+    },
+    {
+      "title": "Change control point locations",
+      "level": 3,
+      "page_range": "26-26",
+      "chunk_ids": [
+        "manual:2f186e102127:2358ea4f:025"
+      ]
+    },
+    {
+      "title": "Add, delete, or redistribute control points",
+      "level": 3,
+      "page_range": "26-26",
+      "chunk_ids": [
+        "manual:2f186e102127:cfcf7206:026"
+      ]
+    },
+    {
+      "title": "Polysurfaces",
+      "level": 2,
+      "page_range": "27-27",
+      "chunk_ids": [
+        "manual:2f186e102127:abec07ac:027"
+      ]
+    },
+    {
+      "title": "Solids",
+      "level": 2,
+      "page_range": "27-27",
+      "chunk_ids": [
+        "manual:2f186e102127:7b8ce6b2:028"
+      ]
+    },
+    {
+      "title": "Light-weight extrusion objects",
+      "level": 2,
+      "page_range": "28-28",
+      "chunk_ids": [
+        "manual:2f186e102127:ec708744:029"
+      ]
+    },
+    {
+      "title": "Polygon mesh objects",
+      "level": 2,
+      "page_range": "29-29",
+      "chunk_ids": [
+        "manual:2f186e102127:cc7886b7:030"
+      ]
+    },
+    {
+      "title": "3 - Selecting Objects",
+      "level": 1,
+      "page_range": "30-30",
+      "chunk_ids": [
+        "manual:2f186e102127:8fca0055:031"
+      ]
+    },
+    {
+      "title": "Select and deselect objects",
+      "level": 2,
+      "page_range": "30-31",
+      "chunk_ids": [
+        "manual:2f186e102127:9311bbb8:032"
+      ]
+    },
+    {
+      "title": "Selection menu",
+      "level": 2,
+      "page_range": "32-32",
+      "chunk_ids": [
+        "manual:2f186e102127:b23d266f:033"
+      ]
+    },
+    {
+      "title": "Select objects with windows",
+      "level": 2,
+      "page_range": "32-34",
+      "chunk_ids": [
+        "manual:2f186e102127:7021c343:034"
+      ]
+    },
+    {
+      "title": "Other ways of selecting objects",
+      "level": 2,
+      "page_range": "35-35",
+      "chunk_ids": [
+        "manual:2f186e102127:a7b3ecd9:035"
+      ]
+    },
+    {
+      "title": "Sub-object selection",
+      "level": 2,
+      "page_range": "36-37",
+      "chunk_ids": [
+        "manual:2f186e102127:c2f96e25:036",
+        "manual:2f186e102127:e8731743:144"
+      ]
+    },
+    {
+      "title": "4 - Navigating Viewports",
+      "level": 1,
+      "page_range": "38-38",
+      "chunk_ids": [
+        "manual:2f186e102127:fd8ddc3b:037"
+      ]
+    },
+    {
+      "title": "Viewport title",
+      "level": 2,
+      "page_range": "38-38",
+      "chunk_ids": [
+        "manual:2f186e102127:f096e39f:038"
+      ]
+    },
+    {
+      "title": "Viewport projection",
+      "level": 2,
+      "page_range": "39-39",
+      "chunk_ids": [
+        "manual:2f186e102127:696e3730:039"
+      ]
+    },
+    {
+      "title": "Parallel",
+      "level": 3,
+      "page_range": "39-39",
+      "chunk_ids": [
+        "manual:2f186e102127:c404d945:040"
+      ]
+    },
+    {
+      "title": "Perspective",
+      "level": 3,
+      "page_range": "39-39",
+      "chunk_ids": [
+        "manual:2f186e102127:d4c5a805:041"
+      ]
+    },
+    {
+      "title": "Two Point Perspective",
+      "level": 3,
+      "page_range": "40-40",
+      "chunk_ids": [
+        "manual:2f186e102127:986530d5:042"
+      ]
+    },
+    {
+      "title": "Viewport navigation",
+      "level": 2,
+      "page_range": "40-40",
+      "chunk_ids": [
+        "manual:2f186e102127:7b46e911:043"
+      ]
+    },
+    {
+      "title": "Mouse navigation",
+      "level": 3,
+      "page_range": "40-40",
+      "chunk_ids": [
+        "manual:2f186e102127:3057f574:044"
+      ]
+    },
+    {
+      "title": "Key and mouse combinations",
+      "level": 3,
+      "page_range": "41-41",
+      "chunk_ids": [
+        "manual:2f186e102127:09254df8:045"
+      ]
+    },
+    {
+      "title": "Viewport display modes",
+      "level": 2,
+      "page_range": "42-42",
+      "chunk_ids": [
+        "manual:2f186e102127:70ff6eea:046"
+      ]
+    },
+    {
+      "title": "Wireframe",
+      "level": 3,
+      "page_range": "42-42",
+      "chunk_ids": [
+        "manual:2f186e102127:9d97cce3:047"
+      ]
+    },
+    {
+      "title": "Shaded",
+      "level": 3,
+      "page_range": "43-43",
+      "chunk_ids": [
+        "manual:2f186e102127:8dbfb152:048"
+      ]
+    },
+    {
+      "title": "Rendered",
+      "level": 3,
+      "page_range": "44-44",
+      "chunk_ids": [
+        "manual:2f186e102127:57c49f76:049"
+      ]
+    },
+    {
+      "title": "Raytraced",
+      "level": 3,
+      "page_range": "44-44",
+      "chunk_ids": [
+        "manual:2f186e102127:19c70cf3:050"
+      ]
+    },
+    {
+      "title": "Other shaded modes",
+      "level": 3,
+      "page_range": "44-45",
+      "chunk_ids": [
+        "manual:2f186e102127:4b7515bb:051"
+      ]
+    },
+    {
+      "title": "Grid snap",
+      "level": 2,
+      "page_range": "47-47",
+      "chunk_ids": [
+        "manual:2f186e102127:53c16e2d:054"
+      ]
+    },
+    {
+      "title": "Ortho mode",
+      "level": 2,
+      "page_range": "47-48",
+      "chunk_ids": [
+        "manual:2f186e102127:2587c3df:055"
+      ]
+    },
+    {
+      "title": "Object snaps",
+      "level": 2,
+      "page_range": "49-49",
+      "chunk_ids": [
+        "manual:2f186e102127:8f0d1b8a:056"
+      ]
+    },
+    {
+      "title": "Persistent object snaps",
+      "level": 3,
+      "page_range": "49-49",
+      "chunk_ids": [
+        "manual:2f186e102127:1284e266:057"
+      ]
+    },
+    {
+      "title": "One-time object snaps",
+      "level": 3,
+      "page_range": "50-50",
+      "chunk_ids": [
+        "manual:2f186e102127:a5c9b068:058"
+      ]
+    },
+    {
+      "title": "Object snaps using references",
+      "level": 3,
+      "page_range": "51-51",
+      "chunk_ids": [
+        "manual:2f186e102127:09b5b2d4:059"
+      ]
+    },
+    {
+      "title": "Constrain cursor movement",
+      "level": 2,
+      "page_range": "51-51",
+      "chunk_ids": [
+        "manual:2f186e102127:070784ac:060"
+      ]
+    },
+    {
+      "title": "Ortho",
+      "level": 3,
+      "page_range": "51-51",
+      "chunk_ids": [
+        "manual:2f186e102127:d0ba85ca:061"
+      ]
+    },
+    {
+      "title": "Distance constraint",
+      "level": 3,
+      "page_range": "52-52",
+      "chunk_ids": [
+        "manual:2f186e102127:786322f7:062"
+      ]
+    },
+    {
+      "title": "Angle constraint",
+      "level": 3,
+      "page_range": "53-53",
+      "chunk_ids": [
+        "manual:2f186e102127:d3c81cf1:063"
+      ]
+    },
+    {
+      "title": "Distance and angle together",
+      "level": 3,
+      "page_range": "53-53",
+      "chunk_ids": [
+        "manual:2f186e102127:a0d302ef:064"
+      ]
+    },
+    {
+      "title": "SmartTrack™",
+      "level": 2,
+      "page_range": "54-54",
+      "chunk_ids": [
+        "manual:2f186e102127:94fe917b:065"
+      ]
+    },
+    {
+      "title": "Coordinate systems",
+      "level": 2,
+      "page_range": "54-54",
+      "chunk_ids": [
+        "manual:2f186e102127:50466422:066"
+      ]
+    },
+    {
+      "title": "Right-hand rule",
+      "level": 3,
+      "page_range": "54-54",
+      "chunk_ids": [
+        "manual:2f186e102127:d08645ee:067"
+      ]
+    },
+    {
+      "title": "Construction plane coordinates",
+      "level": 3,
+      "page_range": "55-55",
+      "chunk_ids": [
+        "manual:2f186e102127:e644bc3b:068"
+      ]
+    },
+    {
+      "title": "Relative coordinates",
+      "level": 3,
+      "page_range": "56-56",
+      "chunk_ids": [
+        "manual:2f186e102127:8600ccc1:069"
+      ]
+    },
+    {
+      "title": "World coordinates",
+      "level": 3,
+      "page_range": "56-56",
+      "chunk_ids": [
+        "manual:2f186e102127:40d1cb41:070"
+      ]
+    },
+    {
+      "title": "Elevator mode",
+      "level": 2,
+      "page_range": "57-59",
+      "chunk_ids": [
+        "manual:2f186e102127:fffca9da:071"
+      ]
+    },
+    {
+      "title": "Extrude curves",
+      "level": 2,
+      "page_range": "61-61",
+      "chunk_ids": [
+        "manual:2f186e102127:cb2cb434:074"
+      ]
+    },
+    {
+      "title": "Loft curves",
+      "level": 2,
+      "page_range": "62-62",
+      "chunk_ids": [
+        "manual:2f186e102127:096e86ba:075"
+      ]
+    },
+    {
+      "title": "Revolve curves",
+      "level": 2,
+      "page_range": "63-64",
+      "chunk_ids": [
+        "manual:2f186e102127:658b6ae4:076"
+      ]
+    },
+    {
+      "title": "Revolve curves with a rail",
+      "level": 2,
+      "page_range": "65-66",
+      "chunk_ids": [
+        "manual:2f186e102127:53457d55:077"
+      ]
+    },
+    {
+      "title": "Sweep along one rail curve",
+      "level": 2,
+      "page_range": "67-67",
+      "chunk_ids": [
+        "manual:2f186e102127:ec41fe09:078"
+      ]
+    },
+    {
+      "title": "Sweep along two rail curves",
+      "level": 2,
+      "page_range": "68-69",
+      "chunk_ids": [
+        "manual:2f186e102127:eb2b5fce:079"
+      ]
+    },
+    {
+      "title": "7 - Edit Curves and Surfaces",
+      "level": 1,
+      "page_range": "70-70",
+      "chunk_ids": [
+        "manual:2f186e102127:5734fc22:080"
+      ]
+    },
+    {
+      "title": "Join",
+      "level": 2,
+      "page_range": "70-73",
+      "chunk_ids": [
+        "manual:2f186e102127:0299dbe4:081"
+      ]
+    },
+    {
+      "title": "Explode",
+      "level": 2,
+      "page_range": "74-75",
+      "chunk_ids": [
+        "manual:2f186e102127:4a3605f9:082"
+      ]
+    },
+    {
+      "title": "Trimming and Splitting",
+      "level": 2,
+      "page_range": "76-76",
+      "chunk_ids": [
+        "manual:2f186e102127:0a42e0f2:083"
+      ]
+    },
+    {
+      "title": "Trim",
+      "level": 3,
+      "page_range": "76-77",
+      "chunk_ids": [
+        "manual:2f186e102127:0dc5e78e:084"
+      ]
+    },
+    {
+      "title": "Split",
+      "level": 3,
+      "page_range": "78-79",
+      "chunk_ids": [
+        "manual:2f186e102127:13bc43a3:085"
+      ]
+    },
+    {
+      "title": "Untrim",
+      "level": 3,
+      "page_range": "80-81",
+      "chunk_ids": [
+        "manual:2f186e102127:e6e1f7fb:086"
+      ]
+    },
+    {
+      "title": "8 - Transforms - Move, Copy, Rotate, and Scale",
+      "level": 1,
+      "page_range": "82-82",
+      "chunk_ids": [
+        "manual:2f186e102127:db119d68:087"
+      ]
+    },
+    {
+      "title": "Move",
+      "level": 2,
+      "page_range": "82-83",
+      "chunk_ids": [
+        "manual:2f186e102127:59e1f27a:088"
+      ]
+    },
+    {
+      "title": "Move objects by dragging",
+      "level": 3,
+      "page_range": "84-84",
+      "chunk_ids": [
+        "manual:2f186e102127:d6918b1f:089"
+      ]
+    },
+    {
+      "title": "Move objects using elevator mode",
+      "level": 3,
+      "page_range": "85-86",
+      "chunk_ids": [
+        "manual:2f186e102127:43757e57:090"
+      ]
+    },
+    {
+      "title": "Copy objects",
+      "level": 2,
+      "page_range": "87-88",
+      "chunk_ids": [
+        "manual:2f186e102127:022cc1bf:091"
+      ]
+    },
+    {
+      "title": "Rotate",
+      "level": 2,
+      "page_range": "89-90",
+      "chunk_ids": [
+        "manual:2f186e102127:3b770aac:092"
+      ]
+    },
+    {
+      "title": "Scale",
+      "level": 2,
+      "page_range": "91-92",
+      "chunk_ids": [
+        "manual:2f186e102127:6d196735:093"
+      ]
+    },
+    {
+      "title": "Mirror",
+      "level": 2,
+      "page_range": "93-95",
+      "chunk_ids": [
+        "manual:2f186e102127:6edc60df:094"
+      ]
+    },
+    {
+      "title": "Layers panel",
+      "level": 3,
+      "page_range": "97-97",
+      "chunk_ids": [
+        "manual:2f186e102127:20659338:098"
+      ]
+    },
+    {
+      "title": "Groups",
+      "level": 2,
+      "page_range": "98-98",
+      "chunk_ids": [
+        "manual:2f186e102127:04cd973f:099"
+      ]
+    },
+    {
+      "title": "Blocks",
+      "level": 2,
+      "page_range": "99-99",
+      "chunk_ids": [
+        "manual:2f186e102127:b6c38e0c:100"
+      ]
+    },
+    {
+      "title": "Worksessions",
+      "level": 2,
+      "page_range": "99-99",
+      "chunk_ids": [
+        "manual:2f186e102127:20ae34ca:101"
+      ]
+    },
+    {
+      "title": "10 - Annotation: Dimensions and Text",
+      "level": 1,
+      "page_range": "100-100",
+      "chunk_ids": [
+        "manual:2f186e102127:d9035d41:102"
+      ]
+    },
+    {
+      "title": "Dimensions",
+      "level": 2,
+      "page_range": "100-100",
+      "chunk_ids": [
+        "manual:2f186e102127:1b69c22b:103"
+      ]
+    },
+    {
+      "title": "Annotation Text",
+      "level": 2,
+      "page_range": "101-101",
+      "chunk_ids": [
+        "manual:2f186e102127:11218cc4:104"
+      ]
+    },
+    {
+      "title": "Leaders",
+      "level": 2,
+      "page_range": "101-101",
+      "chunk_ids": [
+        "manual:2f186e102127:afc18573:105"
+      ]
+    },
+    {
+      "title": "Dots",
+      "level": 2,
+      "page_range": "102-102",
+      "chunk_ids": [
+        "manual:2f186e102127:44f7688f:106"
+      ]
+    },
+    {
+      "title": "Hatching",
+      "level": 2,
+      "page_range": "102-102",
+      "chunk_ids": [
+        "manual:2f186e102127:85a5c040:107"
+      ]
+    },
+    {
+      "title": "Hidden line removal",
+      "level": 2,
+      "page_range": "103-103",
+      "chunk_ids": [
+        "manual:2f186e102127:2e86f47a:108"
+      ]
+    },
+    {
+      "title": "Notes",
+      "level": 2,
+      "page_range": "103-103",
+      "chunk_ids": [
+        "manual:2f186e102127:1fa4c4ac:109"
+      ]
+    },
+    {
+      "title": "11 - Curve and Surface Analysis",
+      "level": 1,
+      "page_range": "104-104",
+      "chunk_ids": [
+        "manual:2f186e102127:df397ee2:110"
+      ]
+    },
+    {
+      "title": "Measure distance, angle, and radius",
+      "level": 2,
+      "page_range": "104-104",
+      "chunk_ids": [
+        "manual:2f186e102127:dc74b9f7:111"
+      ]
+    },
+    {
+      "title": "Direction",
+      "level": 2,
+      "page_range": "104-104",
+      "chunk_ids": [
+        "manual:2f186e102127:5d258472:112"
+      ]
+    },
+    {
+      "title": "Visual surface analysis",
+      "level": 2,
+      "page_range": "105-105",
+      "chunk_ids": [
+        "manual:2f186e102127:8c2927a8:113"
+      ]
+    },
+    {
+      "title": "Curvature analysis",
+      "level": 3,
+      "page_range": "105-105",
+      "chunk_ids": [
+        "manual:2f186e102127:fbc9f4d3:114"
+      ]
+    },
+    {
+      "title": "Environment map",
+      "level": 3,
+      "page_range": "106-106",
+      "chunk_ids": [
+        "manual:2f186e102127:6766019b:115"
+      ]
+    },
+    {
+      "title": "Zebra",
+      "level": 3,
+      "page_range": "106-106",
+      "chunk_ids": [
+        "manual:2f186e102127:ce0f4e75:116"
+      ]
+    },
+    {
+      "title": "Draft angle analysis",
+      "level": 3,
+      "page_range": "106-106",
+      "chunk_ids": [
+        "manual:2f186e102127:aa268cc8:117"
+      ]
+    },
+    {
+      "title": "Edge evaluation",
+      "level": 2,
+      "page_range": "107-107",
+      "chunk_ids": [
+        "manual:2f186e102127:abbbb5d6:118"
+      ]
+    },
+    {
+      "title": "Diagnostics",
+      "level": 2,
+      "page_range": "107-107",
+      "chunk_ids": [
+        "manual:2f186e102127:7bf4a725:119"
+      ]
+    },
+    {
+      "title": "12 - Render",
+      "level": 1,
+      "page_range": "108-108",
+      "chunk_ids": [
+        "manual:2f186e102127:776b10f9:120"
+      ]
+    },
+    {
+      "title": "Lights",
+      "level": 2,
+      "page_range": "108-108",
+      "chunk_ids": [
+        "manual:2f186e102127:3ef1615f:121"
+      ]
+    },
+    {
+      "title": "Materials",
+      "level": 2,
+      "page_range": "109-109",
+      "chunk_ids": [
+        "manual:2f186e102127:47ce77b9:122"
+      ]
+    },
+    {
+      "title": "Environment",
+      "level": 2,
+      "page_range": "109-109",
+      "chunk_ids": [
+        "manual:2f186e102127:94e59fbd:123"
+      ]
+    },
+    {
+      "title": "Ground Plane",
+      "level": 2,
+      "page_range": "110-110",
+      "chunk_ids": [
+        "manual:2f186e102127:c17157b2:124"
+      ]
+    },
+    {
+      "title": "Render Preview",
+      "level": 2,
+      "page_range": "110-111",
+      "chunk_ids": [
+        "manual:2f186e102127:143c06b8:125"
+      ]
+    },
+    {
+      "title": "Draw the pull toy body",
+      "level": 2,
+      "page_range": "113-114",
+      "chunk_ids": [
+        "manual:2f186e102127:858b6e51:128"
+      ]
+    },
+    {
+      "title": "Draw the axles and wheel hubs",
+      "level": 2,
+      "page_range": "115-116",
+      "chunk_ids": [
+        "manual:2f186e102127:963e1bdf:129"
+      ]
+    },
+    {
+      "title": "Draw the lug nuts",
+      "level": 2,
+      "page_range": "117-118",
+      "chunk_ids": [
+        "manual:2f186e102127:1bb71b15:130"
+      ]
+    },
+    {
+      "title": "Array the lug nuts",
+      "level": 2,
+      "page_range": "119-119",
+      "chunk_ids": [
+        "manual:2f186e102127:4c7c0cc4:131"
+      ]
+    },
+    {
+      "title": "Draw the tires",
+      "level": 2,
+      "page_range": "120-120",
+      "chunk_ids": [
+        "manual:2f186e102127:b6b32d74:132"
+      ]
+    },
+    {
+      "title": "Mirror the wheels",
+      "level": 2,
+      "page_range": "121-122",
+      "chunk_ids": [
+        "manual:2f186e102127:85c28980:133"
+      ]
+    },
+    {
+      "title": "Draw the eyes",
+      "level": 2,
+      "page_range": "123-123",
+      "chunk_ids": [
+        "manual:2f186e102127:d0182ff8:134"
+      ]
+    },
+    {
+      "title": "Make the pull cord",
+      "level": 2,
+      "page_range": "124-129",
+      "chunk_ids": [
+        "manual:2f186e102127:508c1150:135"
+      ]
+    },
+    {
+      "title": "Set up the guides",
+      "level": 2,
+      "page_range": "131-131",
+      "chunk_ids": [
+        "manual:2f186e102127:fd6cb816:137"
+      ]
+    },
+    {
+      "title": "Draw the body profile curve",
+      "level": 2,
+      "page_range": "132-132",
+      "chunk_ids": [
+        "manual:2f186e102127:a9a6989d:138"
+      ]
+    },
+    {
+      "title": "Draw the lens profile curve",
+      "level": 2,
+      "page_range": "133-135",
+      "chunk_ids": [
+        "manual:2f186e102127:2f94b287:139"
+      ]
+    },
+    {
+      "title": "Build body and lens surfaces",
+      "level": 2,
+      "page_range": "136-137",
+      "chunk_ids": [
+        "manual:2f186e102127:be76e141:140"
+      ]
+    },
+    {
+      "title": "Use History",
+      "level": 2,
+      "page_range": "138-139",
+      "chunk_ids": [
+        "manual:2f186e102127:8c7f7a8f:141"
+      ]
+    },
+    {
+      "title": "Create the speaker shell",
+      "level": 2,
+      "page_range": "141-141",
+      "chunk_ids": [
+        "manual:2f186e102127:75812a7f:143"
+      ]
+    },
+    {
+      "title": "Create the padding and cover",
+      "level": 2,
+      "page_range": "145-146",
+      "chunk_ids": [
+        "manual:2f186e102127:e55123d9:145"
+      ]
+    },
+    {
+      "title": "Create the mounting bracket",
+      "level": 2,
+      "page_range": "147-150",
+      "chunk_ids": [
+        "manual:2f186e102127:aec2424d:146"
+      ]
+    },
+    {
+      "title": "Create the headband",
+      "level": 2,
+      "page_range": "151-154",
+      "chunk_ids": [
+        "manual:2f186e102127:f73870ff:147"
+      ]
+    },
+    {
+      "title": "Round the headband ends",
+      "level": 2,
+      "page_range": "155-159",
+      "chunk_ids": [
+        "manual:2f186e102127:fc85dac0:148"
+      ]
+    },
+    {
+      "title": "Create the speaker wire",
+      "level": 2,
+      "page_range": "160-162",
+      "chunk_ids": [
+        "manual:2f186e102127:f0b8c5e8:149"
+      ]
+    },
+    {
+      "title": "Mirror the headphone parts",
+      "level": 2,
+      "page_range": "163-164",
+      "chunk_ids": [
+        "manual:2f186e102127:dbe744cc:150"
+      ]
+    },
+    {
+      "title": "Learn more",
+      "level": 3,
+      "page_range": "165-165",
+      "chunk_ids": [
+        "manual:2f186e102127:6be51b29:151"
+      ]
+    },
+    {
+      "title": "16 - Tutorial: Loft and Sweep - Boat",
+      "level": 1,
+      "page_range": "166-166",
+      "chunk_ids": [
+        "manual:2f186e102127:5d997d1a:152"
+      ]
+    },
+    {
+      "title": "Lay out the hull curves",
+      "level": 2,
+      "page_range": "167-167",
+      "chunk_ids": [
+        "manual:2f186e102127:0d98aa31:153"
+      ]
+    },
+    {
+      "title": "Check the curves for fairness",
+      "level": 3,
+      "page_range": "168-169",
+      "chunk_ids": [
+        "manual:2f186e102127:1e4d9e88:154"
+      ]
+    },
+    {
+      "title": "Fix the curvature",
+      "level": 3,
+      "page_range": "170-170",
+      "chunk_ids": [
+        "manual:2f186e102127:b5638650:155"
+      ]
+    },
+    {
+      "title": "Improve the curve further",
+      "level": 3,
+      "page_range": "171-172",
+      "chunk_ids": [
+        "manual:2f186e102127:6cbc0337:156"
+      ]
+    },
+    {
+      "title": "Create the 3‑D curves",
+      "level": 2,
+      "page_range": "173-174",
+      "chunk_ids": [
+        "manual:2f186e102127:cac0b4b4:157"
+      ]
+    },
+    {
+      "title": "Revise the curves",
+      "level": 2,
+      "page_range": "175-176",
+      "chunk_ids": [
+        "manual:2f186e102127:5ace263f:158"
+      ]
+    },
+    {
+      "title": "Loft the hull surfaces",
+      "level": 2,
+      "page_range": "177-177",
+      "chunk_ids": [
+        "manual:2f186e102127:066d23ce:159"
+      ]
+    },
+    {
+      "title": "Create the other side of the hull",
+      "level": 2,
+      "page_range": "178-179",
+      "chunk_ids": [
+        "manual:2f186e102127:c8ec0fb3:160"
+      ]
+    },
+    {
+      "title": "Build the transom",
+      "level": 2,
+      "page_range": "180-182",
+      "chunk_ids": [
+        "manual:2f186e102127:a49ae434:161"
+      ]
+    },
+    {
+      "title": "Add the deck",
+      "level": 2,
+      "page_range": "183-183",
+      "chunk_ids": [
+        "manual:2f186e102127:cedd7970:162"
+      ]
+    },
+    {
+      "title": "Compromise between concept and reality",
+      "level": 3,
+      "page_range": "183-187",
+      "chunk_ids": [
+        "manual:2f186e102127:099ba3e8:163"
+      ]
+    },
+    {
+      "title": "The body",
+      "level": 2,
+      "page_range": "189-194",
+      "chunk_ids": [
+        "manual:2f186e102127:be8817e3:165"
+      ]
+    },
+    {
+      "title": "The eyes",
+      "level": 2,
+      "page_range": "195-197",
+      "chunk_ids": [
+        "manual:2f186e102127:83dd632c:166"
+      ]
+    },
+    {
+      "title": "The beak",
+      "level": 2,
+      "page_range": "198-200",
+      "chunk_ids": [
+        "manual:2f186e102127:3319edd1:167"
+      ]
+    },
+    {
+      "title": "The feet",
+      "level": 2,
+      "page_range": "201-206",
+      "chunk_ids": [
+        "manual:2f186e102127:4dc48082:168"
+      ]
+    },
+    {
+      "title": "The tail",
+      "level": 2,
+      "page_range": "207-208",
+      "chunk_ids": [
+        "manual:2f186e102127:a8cf22ad:169"
+      ]
+    },
+    {
+      "title": "The wings",
+      "level": 2,
+      "page_range": "209-211",
+      "chunk_ids": [
+        "manual:2f186e102127:bc740683:170"
+      ]
+    },
+    {
+      "title": "Finishing touches",
+      "level": 2,
+      "page_range": "212-212",
+      "chunk_ids": [
+        "manual:2f186e102127:1af35222:171"
+      ]
+    },
+    {
+      "title": "Add a light and materials",
+      "level": 2,
+      "page_range": "213-215",
+      "chunk_ids": [
+        "manual:2f186e102127:4fd0fea1:172"
+      ]
+    },
+    {
+      "title": "18 - Tutorial: Trace Images - Dragonfly",
+      "level": 1,
+      "page_range": "216-217",
+      "chunk_ids": [
+        "manual:2f186e102127:ecd2e11c:173"
+      ]
+    },
+    {
+      "title": "Place the reference images",
+      "level": 2,
+      "page_range": "218-222",
+      "chunk_ids": [
+        "manual:2f186e102127:8b10b859:174"
+      ]
+    },
+    {
+      "title": "Trace the chest and body",
+      "level": 2,
+      "page_range": "223-227",
+      "chunk_ids": [
+        "manual:2f186e102127:9f0aefed:175"
+      ]
+    },
+    {
+      "title": "Create the body segments",
+      "level": 2,
+      "page_range": "228-229",
+      "chunk_ids": [
+        "manual:2f186e102127:ec74d3e9:176"
+      ]
+    },
+    {
+      "title": "Create the tail",
+      "level": 2,
+      "page_range": "230-236",
+      "chunk_ids": [
+        "manual:2f186e102127:487a4d47:177"
+      ]
+    },
+    {
+      "title": "Create the chest",
+      "level": 2,
+      "page_range": "237-239",
+      "chunk_ids": [
+        "manual:2f186e102127:0affab2d:178"
+      ]
+    },
+    {
+      "title": "Create the head",
+      "level": 2,
+      "page_range": "240-242",
+      "chunk_ids": [
+        "manual:2f186e102127:c169d214:179"
+      ]
+    },
+    {
+      "title": "Add the neck",
+      "level": 2,
+      "page_range": "243-244",
+      "chunk_ids": [
+        "manual:2f186e102127:35654a74:180"
+      ]
+    },
+    {
+      "title": "Create the eyes",
+      "level": 2,
+      "page_range": "245-247",
+      "chunk_ids": [
+        "manual:2f186e102127:bd4310fc:181"
+      ]
+    },
+    {
+      "title": "Trace the wings",
+      "level": 2,
+      "page_range": "248-249",
+      "chunk_ids": [
+        "manual:2f186e102127:4d75fe2e:182"
+      ]
+    },
+    {
+      "title": "Create the legs",
+      "level": 2,
+      "page_range": "250-253",
+      "chunk_ids": [
+        "manual:2f186e102127:a396844c:183"
+      ]
+    },
+    {
+      "title": "Create the planar reference plane",
+      "level": 2,
+      "page_range": "255-255",
+      "chunk_ids": [
+        "manual:2f186e102127:3b0b6016:185"
+      ]
+    },
+    {
+      "title": "Create text objects to wrap",
+      "level": 2,
+      "page_range": "256-259",
+      "chunk_ids": [
+        "manual:2f186e102127:17510ab8:186"
+      ]
+    },
+    {
+      "title": "Create solid shapes",
+      "level": 2,
+      "page_range": "260-263",
+      "chunk_ids": [
+        "manual:2f186e102127:af38918e:188"
+      ]
+    },
+    {
+      "title": "Drill the holes",
+      "level": 2,
+      "page_range": "264-264",
+      "chunk_ids": [
+        "manual:2f186e102127:01e237fb:189"
+      ]
+    },
+    {
+      "title": "Copy the holes",
+      "level": 2,
+      "page_range": "265-266",
+      "chunk_ids": [
+        "manual:2f186e102127:83f3cf48:190"
+      ]
+    },
+    {
+      "title": "Make a 2-D drawing",
+      "level": 2,
+      "page_range": "267-267",
+      "chunk_ids": [
+        "manual:2f186e102127:d9872c76:191"
+      ]
+    },
+    {
+      "title": "Dimension the 2-D drawing",
+      "level": 2,
+      "page_range": "268-271",
+      "chunk_ids": [
+        "manual:2f186e102127:056cb7fe:192"
+      ]
+    },
+    {
+      "title": "21 - Tutorial: Layouts - Title Block",
+      "level": 1,
+      "page_range": "272-272",
+      "chunk_ids": [
+        "manual:2f186e102127:9b2f63c1:193"
+      ]
+    },
+    {
+      "title": "Layout viewports",
+      "level": 2,
+      "page_range": "273-273",
+      "chunk_ids": [
+        "manual:2f186e102127:327e1f2c:194"
+      ]
+    },
+    {
+      "title": "Insert a title block",
+      "level": 2,
+      "page_range": "274-276",
+      "chunk_ids": [
+        "manual:2f186e102127:1db69bd6:195"
+      ]
+    }
+  ]
+}
