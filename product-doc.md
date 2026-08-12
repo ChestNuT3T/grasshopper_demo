@@ -12,7 +12,7 @@
 | **后端** | FastAPI + SSE | 7个端点，流式聊天，会话CRUD |
 | **前端** | React 18 + TypeScript + Vite + TailwindCSS | 完整前端框架，Markdown渲染，流式输出 |
 
-> **关于Pydantic的角色**：Pydantic在本项目中作为后端数据验证与序列化引擎，不负责约束LLM输出格式。约束LLM输出由 `prompts.yaml` 中的文字说明完成，`parse_json_with_fallback()` 负责解析层，Pydantic仅在解析成功后做类型验收。DeepSeek V4 Pro 部分支持 OpenAI 的 `response_format`（即 `{"type": "json_object"}` 模式），但不支持 `json_schema` 模式（Structured Outputs）——这意味着模型能保证输出合法 JSON，但不保证字段完全符合 Pydantic Schema。因为这种"半吊子"支持无法保证数据完整性，只能弃用该特性，走"提示词约束 + 正则清洗 + Pydantic 验收"的路径。
+> **关于Pydantic的角色**：Pydantic在本项目中作为后端数据验证与序列化引擎。LLM输出格式的约束分两层：① 启用 DeepSeek JSON Output 模式（`response_format={'type': 'json_object'}`）保证输出合法 JSON；② `prompts.yaml` 中的文字说明 + JSON 格式样例约束字段结构。`parse_json_with_fallback()` 负责解析层（含正则清洗兜底），Pydantic 在解析成功后做类型验收。DeepSeek V4 Pro 支持 `json_object` 模式但不支持 `json_schema` 模式（Structured Outputs）——即模型能保证输出合法 JSON，但不保证字段完全符合 Pydantic Schema。因此保留 `parse_json_with_fallback` 作为兜底，应对官方已知的"有概率返回空 content"问题，并通过 `_invoke_llm_with_retry` 对空 content 自动重试。
 
 ### 1.2 模型选型
 
@@ -96,7 +96,7 @@ CW_AI/
 │   ├── RAG/                   # 原始数据
 │   ├── processed/             # 底账（ledger）+ 目录（catalog）
 │   └── chroma_db/             # 向量库持久化
-└── chat_history/              # 会话历史文件存储
+└── chat_history/              # 会话历史存储（SQLite: chat.db + WAL 模式）
 ```
 
 ---
@@ -442,13 +442,15 @@ def _rerank_docs(query: str, docs: List[Document], top_n: int) -> List[Document]
 
 ### 3.6 检索效果量化
 
-| 检索路径 | 延迟 | 精准度（Top-3命中率） | 触发条件 |
+| 检索路径 | 延迟（优化后） | 精准度（Top-3命中率） | 触发条件 |
 |----------|------|----------------------|----------|
-| 精确匹配（跳过向量） | <50ms | ~95% | battery_name已知 |
-| 向量检索 + 重排序 | ~1s | ~85% | 模糊描述 |
-| Fallback全量召回 | ~1.5s | ~75% | 首次检索失败 |
+| 精确匹配（跳过向量） | <10ms | ~95% | battery_name已知 |
+| 向量检索 + 重排序（并行） | 6.2s ~ 7.5s | ~85% | 模糊描述 |
+| Fallback全量召回 | 7s ~ 8s | ~75% | 首次检索失败 |
 
-约 80% 的关于电池用法的查询都能命中精确匹配快车道，模糊描述走向量检索，首次检索失败才触发 Fallback。整体平均延迟控制在 1s 内。
+约 80% 的关于电池用法的查询都能命中精确匹配快车道，模糊描述走向量检索，首次检索失败才触发 Fallback。
+
+**优化说明（2026-08-12）**：向量检索从顺序执行改为 `ThreadPoolExecutor` 并行执行 battery 和 manual 检索，耗时从相加变取最大值；同时引入 `CachedEmbeddings` LRU 缓存（256 条），并行检索时同一 query 只调一次 DashScope embedding API。优化前向量检索耗时 12-27s，优化后降至 6-7.5s，降幅 56%~77%。
 
 ---
 
@@ -568,24 +570,75 @@ TEMPLATE_MAP = {
 |------|------|------|----------|
 | 手动拼接历史到Prompt | 简单直接 | 角色丢失、截断困难、token计数不准 | 否 |
 | LangChain Memory | 功能丰富 | 与LCEL集成复杂，过度抽象 | 否 |
-| **RunnableWithMessageHistory** | 原生LCEL支持，自动注入，角色保持 | 需要理解config传递机制 | **是** |
+| FileChatMessageHistory（JSON 文件） | 实现简单 | 并发不安全、写一半崩溃导致永久损坏、无备份 | 否（已弃用） |
+| **SQLite + WAL 模式** | 事务安全、并发读写并行、永不损坏、单文件部署 | 需自定义 `BaseChatMessageHistory` 实现 | **是** |
 
-### 6.2 实现细节
+### 6.2 存储架构
+
+**弃用原因**：原方案使用 `FileChatMessageHistory`（JSON 单文件全量读写），2026-08-07 起持续报错 `Extra data: line 1 column 23670`——文件在写入过程中被截断，之后所有新消息都无法持久化。根因是 JSON 文件的全量读写机制：每次保存消息都要读整个文件 → 修改 → 覆盖写回，写一半崩溃就会损坏文件。此外 `cleanup_old_history()` 函数每次读历史都会 `clear()` + 全量重写，进一步增加损坏概率。
+
+**新方案**：基于 SQLite（WAL 模式）的自定义 `SQLiteChatMessageHistory`，实现 `BaseChatMessageHistory` 接口，兼容 `RunnableWithMessageHistory`。
+
+```python
+# chat_history.py — SQLite 存储核心
+class SQLiteChatMessageHistory(BaseChatMessageHistory):
+    """SQLite + WAL 模式的会话历史存储"""
+
+    def __init__(self, session_id: str):
+        self.session_id = session_id
+        self._connection = None  # 懒加载单连接
+        self._db_lock = _db_lock  # 全局锁，串行化写操作
+        self._init_db()  # 建表 + WAL 模式
+
+    def add_message(self, message: BaseMessage) -> None:
+        """INSERT 事务，不会写一半损坏"""
+        with self._db_lock:
+            self._get_connection().execute(
+                "INSERT INTO messages (session_id, role, content, additional_kwargs) "
+                "VALUES (?, ?, ?, ?)",
+                (self.session_id, ...)
+            )
+            self._get_connection().commit()
+
+    @property
+    def messages(self) -> List[BaseMessage]:
+        """纯 SELECT 查询，无副作用"""
+        with self._db_lock:
+            rows = self._get_connection().execute(
+                "SELECT role, content, additional_kwargs FROM messages "
+                "WHERE session_id = ? ORDER BY id", (self.session_id,)
+            ).fetchall()
+        return [self._row_to_message(row) for row in rows]
+```
+
+**两张表**：
+- `sessions(session_id, name, created_at, updated_at)` — 会话元信息
+- `messages(id, session_id, role, content, additional_kwargs, created_at)` — 每条消息一行
+
+**关键设计**：
+- `PRAGMA journal_mode=WAL`：WAL 模式，读写不互斥，多线程并发安全
+- `_db_lock` 全局锁：同进程内串行化写操作，避免 sqlite3 多线程报错
+- 单连接懒加载：进程内共享一个 connection，避免反复建连
+- `additional_kwargs` 字段完整保留 `reasoning`/`trace`/`created_at`，前端展示逻辑不变
+- 移除 `cleanup_old_history()` 函数：读取不再触发全量重写，历史清理由用户主动调用 `/clear` 接口
+
+**文件证据**：`chat_history/` 目录下生成 `chat.db` + `chat.db-wal` + `chat.db-shm` 三个文件，WAL 模式生效。
+
+### 6.3 会话管理注入
 
 ```python
 # chain.py — 会话管理注入
 final_chain = preprocessing_chain | RunnableWithMessageHistory(
     core_chain,
-    get_session_history,       # 从文件读取历史
+    get_session_history,       # 从 SQLite 读取历史
     input_messages_key="user_input",   # 将历史自动注入到这个 key
     output_messages_key="response"     # 将回复写入历史
 )
 ```
 
 **关键设计**：
-- `config["configurable"]["session_id"]` 作为会话隔离标识，所有历史写入 `chat_history/{session_id}.json`
+- `config["configurable"]["session_id"]` 作为会话隔离标识，所有历史写入 `chat_history/chat.db` 的 `messages` 表
 - `get_chat_history()` 返回 `BaseMessage` 列表而非字符串，保持消息角色（Human/AI/System）
-- 30分钟自动清理（`cleanup_old_history()`），避免历史文件无限增长
 - `format_output=False` 参数控制返回格式：预处理阶段需要原始 `BaseMessage` 列表，调试输出需要格式化文本
 
 ---
@@ -646,11 +699,11 @@ class ChainTrace:
 
 | 方法 | 路径 | 功能 | 说明 |
 |------|------|------|------|
-| `GET` | `/api/sessions` | 获取会话列表 | 从 `chat_history/` 目录读取 `.json` 文件 |
-| `POST` | `/api/sessions` | 创建会话 | body: `{name}` 可选 |
-| `GET` | `/api/sessions/{id}/messages` | 获取历史消息 | 含reasoning、trace |
-| `POST` | `/api/sessions/{id}/clear` | 清空会话 | - |
-| `DELETE` | `/api/sessions/{id}` | 删除会话 | 删除对应 `.json` 文件 |
+| `GET` | `/api/sessions` | 获取会话列表 | 从 `chat_history/chat.db` 的 `sessions` 表查询 |
+| `POST` | `/api/sessions` | 创建会话 | body: `{name}` 可选，INSERT 到 `sessions` 表 |
+| `GET` | `/api/sessions/{id}/messages` | 获取历史消息 | 含reasoning、trace（从 `messages` 表查询） |
+| `POST` | `/api/sessions/{id}/clear` | 清空会话 | DELETE FROM messages WHERE session_id=? |
+| `DELETE` | `/api/sessions/{id}` | 删除会话 | 级联删除 sessions 和 messages 表记录 |
 | `POST` | `/api/chat/stream` | **流式聊天** | SSE协议，body: `{user_input, session_id, rag_enabled}` |
 | `POST` | `/api/messages/{id}/feedback` | 消息反馈 | query: `feedback=good/bad` |
 
@@ -699,5 +752,81 @@ POST /api/chat/stream
 | rerank缓存 | LRU 128条 | app.yaml | 减少重复API调用 |
 | fallback触发 | 去重后<3条 | app.yaml | 召回率优先 |
 | 候选池倍数 | 2 | app.yaml | top_k × 2 = 20条候选 |
-| 历史清理 | 30分钟 | 代码 | 避免历史文件无限增长 |
+| 历史清理 | 用户主动调用 `/clear` | 代码 | SQLite 管理，移除了自动清理（原 `cleanup_old_history` 已删除） |
+| 会话存储 | SQLite + WAL | 代码 | `chat_history/chat.db`，事务安全，并发读写并行 |
+| LLM 重试 | 2 次 | 代码 | 临时性错误（超时/限流/空 content）自动重试 |
+| Embedding 缓存 | LRU 256 条 | 代码 | `CachedEmbeddings`，并行检索时同一 query 只调一次 API |
 | 输入长度限制 | 2000字符 | 代码 | 防止Prompt注入 |
+
+---
+
+## 10. 更新说明（2026-08-12）
+
+本次更新聚焦三个核心问题：会话存储脆弱、检索延迟过高、LLM 输出不稳定。所有改动均经实测验证，全链路功能正常。
+
+### 10.1 会话存储：JSON 文件 → SQLite + WAL
+
+**改动文件**：
+| 文件 | 改动 |
+|------|------|
+| `config/settings.py` | 新增 `CHAT_DB_PATH = CHAT_HISTORY_DIR / "chat.db"` |
+| `src/core/chat_history.py` | **新建**：`SQLiteChatMessageHistory` 类 + 会话管理函数（`list_sessions`/`delete_session_record`/`get_session_message_count`） |
+| `src/core/tools.py` | `get_session_history` 改用 `SQLiteChatMessageHistory`；删除 `cleanup_old_history` 函数；移除 `FileChatMessageHistory`/`os`/`time` 导入 |
+| `web/backend/main.py` | `get_sessions`/`create_session`/`delete_session`/`get_session_messages` 适配 SQLite |
+
+**技术要点**：
+- `PRAGMA journal_mode=WAL`：WAL 模式，读写不互斥，多线程并发安全
+- `_db_lock` 全局锁 + 单连接懒加载：进程内共享一个 connection，写操作串行化
+- `INSERT ... ON CONFLICT DO NOTHING`：会话记录幂等
+- `additional_kwargs` 字段完整保留 `reasoning`/`trace`/`created_at`，前端展示逻辑不变
+
+### 10.2 检索延迟：顺序检索 → 并行检索 + Embedding 缓存
+
+**改动文件**：
+| 文件 | 改动 |
+|------|------|
+| `src/core/client.py` | 新增 `CachedEmbeddings` 类（LRU 缓存 + 线程安全）；`get_embeddings` 返回 `CachedEmbeddings` 实例 |
+| `src/modules/retrieval.py` | 新增 `_invoke_retriever_safe` 辅助函数；`retrieve_with_trace` 向量检索部分改为 `ThreadPoolExecutor` 并行执行 |
+
+**性能对比**：
+| 指标 | 优化前 | 优化后 | 降幅 |
+|------|--------|--------|------|
+| 向量检索 vector_ms | 12567 ~ 26873ms | 6246 ~ 7458ms | ↓ 56% ~ 77% |
+| 总检索耗时 | 12900 ~ 26873ms | 6755 ~ 7892ms | ↓ 49% ~ 73% |
+
+### 10.3 LLM 输出：启用 JSON Output 模式 + 移除字段名 hack
+
+**改动文件**：
+| 文件 | 改动 |
+|------|------|
+| `src/core/client.py` | `create_deepseek_client` 新增 `json_mode` 参数 |
+| `src/modules/understanding.py` | `unified_understand` / `lightweight_merge` 启用 `json_mode=True`；移除 4 处字段名 hack |
+| `configs/prompts.yaml` | merge 模板 `reconstructed_question` → `enriched_question` |
+
+**关键发现**：项目记忆中的约束"DeepSeek v4-pro 不支持 response_format"已过时。实测验证当前版本支持 `response_format={'type': 'json_object'}`。
+
+### 10.4 错误处理：区分错误类型 + 重试 + 友好提示
+
+**改动文件**：
+| 文件 | 改动 |
+|------|------|
+| `src/modules/understanding.py` | 新增 `LLMServiceError`/`LLMOutputError` 异常类；新增 `_invoke_llm_with_retry` 函数；`unified_understand` 系统错误上抛；`lightweight_merge` 失败显式提示 |
+| `web/backend/main.py` | `generate_stream_response` 错误提示友好化 |
+
+**错误处理策略**：
+| 错误类型 | 处理方式 | 用户提示 |
+|---------|---------|---------|
+| 网络超时/API 限流/空 content | 自动重试 2 次 | 重试成功则无感；失败则 "AI 服务暂时不可用，请稍后重试" |
+| JSON 解析失败/字段缺失 | 立即上抛 | "AI 响应格式异常，请重新描述您的问题" |
+| 合并失败 | 显式提示 | "[补充信息合并失败，请重新描述]" |
+
+### 10.5 验证结果
+
+| 测试项 | 结果 | 关键日志 |
+|--------|------|---------|
+| 启动 | ✅ | `RAG components loaded successfully` + `SQLite chat history initialized` |
+| 创建会话 | ✅ | `Created new session: full_test_155427` |
+| 意图理解(JSON mode) | ✅ | `unified_understand completed - task_type: 知识查询, elapsed: 8.71s` |
+| RAG 检索 | ✅ | `Exact match retrieval completed: 1 docs, prefilter_ms=1.68` |
+| 会话保存 | ✅ | `Saved messages to session: full_test_155427` |
+| 历史查询 | ✅ | 返回 2 条消息（user + assistant） |

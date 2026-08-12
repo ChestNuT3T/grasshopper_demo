@@ -11,6 +11,7 @@ import sys
 import time
 from typing import List, Tuple, Optional, Dict, Any
 from http import HTTPStatus
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import dashscope
 from tenacity import retry, stop_after_attempt, wait_exponential
@@ -354,6 +355,34 @@ def load_documents_from_ledger_by_ids(chunk_ids: List[str]) -> List[Document]:
 
 
 # =============================================================================
+# 安全调用检索器（捕获异常，返回文档与错误信息）
+# =============================================================================
+def _invoke_retriever_safe(
+    retriever,
+    query: str,
+    name: str,
+) -> Tuple[List[Document], Optional[str]]:
+    """
+    安全调用检索器，捕获异常并返回结果与错误信息。
+
+    用于并行检索场景，单个检索器失败不影响另一个。
+
+    Args:
+        retriever: 检索器实例（SelfQueryRetriever 或 VectorStoreRetriever）
+        query: 查询字符串
+        name: 检索器名称（"battery" 或 "manual"），用于日志
+
+    Returns:
+        (文档列表, 错误信息) 元组，错误信息为 None 表示成功
+    """
+    try:
+        return retriever.invoke(query), None
+    except Exception as e:
+        logger.warning(f"{name} retrieval failed: {e}")
+        return [], f"{name} retrieval failed: {str(e)}"
+
+
+# =============================================================================
 # 带 Trace 的检索
 # =============================================================================
 def retrieve_with_trace(
@@ -442,28 +471,48 @@ def retrieve_with_trace(
 
     # -------------------------------------------------------------------------
     # 向量检索，根据 source 参数决定从哪个知识库检索
+    # battery 和 manual 并行检索以降低延迟（source="both" 时收益最大）
     # -------------------------------------------------------------------------
     trace.match_mode = "vector"
     battery_docs = []
     manual_docs = []
-    
+
     prefilter_start = time.time()
     vector_start = time.time()
-    
+
+    # 构建检索任务列表
+    retrieval_tasks = []
     if source in ("battery_only", "both") and battery_retriever:
-        try:
-            battery_docs = battery_retriever.invoke(query)
-        except Exception as e:
-            trace.errors.append(f"Battery retrieval failed: {str(e)}")
-            logger.warning(f"Battery retrieval failed: {e}")
-    
+        retrieval_tasks.append(("battery", battery_retriever))
     if source in ("manual_only", "both") and manual_retriever:
-        try:
-            manual_docs = manual_retriever.invoke(query)
-        except Exception as e:
-            trace.errors.append(f"Manual retrieval failed: {str(e)}")
-            logger.warning(f"Manual retrieval failed: {e}")
-    
+        retrieval_tasks.append(("manual", manual_retriever))
+
+    # 单任务直接调用，多任务用线程池并行执行
+    if len(retrieval_tasks) == 1:
+        name, retriever = retrieval_tasks[0]
+        docs, error = _invoke_retriever_safe(retriever, query, name)
+        if name == "battery":
+            battery_docs = docs
+        else:
+            manual_docs = docs
+        if error:
+            trace.errors.append(error)
+    elif len(retrieval_tasks) > 1:
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            futures = {
+                executor.submit(_invoke_retriever_safe, retriever, query, name): name
+                for name, retriever in retrieval_tasks
+            }
+            for future in as_completed(futures):
+                name = futures[future]
+                docs, error = future.result()
+                if name == "battery":
+                    battery_docs = docs
+                else:
+                    manual_docs = docs
+                if error:
+                    trace.errors.append(error)
+
     stage_times["prefilter_ms"] = (vector_start - prefilter_start) * 1000
     stage_times["vector_ms"] = (time.time() - vector_start) * 1000
 

@@ -124,3 +124,75 @@
 |------|------|-----------|
 | **多模态图像识别** | 上传电池连线图截图，视觉模型理解电池组连接逻辑 | ⚠️ 中。依赖多模态模型对 Grasshopper 电池图标的识别效果，需先验证模型能力再全量开发 |
 | **Agent 功能** | 系统自主决策调用工具辅助完成搭建任务。目前缺少可直接操作 Grasshopper 的插件，通过 JSONL 作为数据源自行开发插件难度较大，需先明确技术可行路径再评估投入 | ⚠️ 中低。需引入多轮工具调用循环、执行环境安全隔离、错误恢复机制，架构改动较大 |
+
+---
+
+## 5. 更新说明（2026-08-12）
+
+### 5.1 会话存储方案重构
+
+**问题**：原方案使用 `FileChatMessageHistory`（JSON 单文件全量读写），2026-08-07 起持续报错 `Extra data: line 1 column 23670`，文件损坏后所有新消息无法持久化。
+
+**修复**：替换为 SQLite（WAL 模式）存储。
+
+| 维度 | 修复前 | 修复后 |
+|------|--------|--------|
+| 存储引擎 | JSON 单文件全量读写 | SQLite + WAL 模式 |
+| 写入机制 | 读全文件 → 修改 → 覆盖写回 | `INSERT` 事务 |
+| 损坏风险 | 写一半崩溃 → 永久损坏 | 事务回滚，永不损坏 |
+| 并发安全 | 无（多线程互相覆盖） | WAL 模式读写并行 |
+| 读历史副作用 | `cleanup_old_history` 每次读都清空重写 | 纯 `SELECT`，无副作用 |
+
+### 5.2 检索延迟优化
+
+**问题**：向量检索耗时 12-27s，总响应最高 80s+，用户体验极差。
+
+**优化**：battery/manual 并行检索 + 查询 embedding 缓存。
+
+| 指标 | 优化前 | 优化后 | 降幅 |
+|------|--------|--------|------|
+| 向量检索 vector_ms | 12567 ~ 26873ms | 6246 ~ 7458ms | ↓ 56% ~ 77% |
+| 总检索耗时 | 12900 ~ 26873ms | 6755 ~ 7892ms | ↓ 49% ~ 73% |
+
+**关键技术**：
+- `ThreadPoolExecutor(max_workers=2)` 并行执行 battery 和 manual 检索，耗时从相加变取最大值
+- `CachedEmbeddings` LRU 缓存（256 条），并行检索时同一 query 只调一次 DashScope API
+- 线程安全：`threading.Lock` 保证并发下 cache miss 只触发一次 API 调用
+
+### 5.3 提示词工程：JSON 输出强约束
+
+**问题**：LLM 输出字段名不稳定（时而 `keyword` 时而 `keywords`），代码中 4 处 hack 兜底。
+
+**修复**：启用 DeepSeek JSON Output 模式（`response_format={'type': 'json_object'}`），强制 LLM 输出合法 JSON。
+
+| 改动 | 说明 |
+|------|------|
+| `create_deepseek_client` 新增 `json_mode` 参数 | 启用时设置 `response_format={"type": "json_object"}` |
+| `unified_understand` / `lightweight_merge` 启用 `json_mode` | 强制 JSON 输出 |
+| 移除 4 处字段名 hack | `keyword`→`keywords`、`reconstructed_question`→`enriched_question` 的运行时补丁全部删除 |
+| `prompts.yaml` merge 模板统一字段名 | `reconstructed_question` → `enriched_question`（消除 hack 根源） |
+| 保留 `parse_json_with_fallback` 兜底 | 应对官方已知的"空 content"问题 |
+
+### 5.4 错误处理：区分错误类型 + 重试 + 友好提示
+
+**问题**：`except Exception` 吞掉所有错误，返回看起来像正常响应的空壳，用户分不清是 API 挂了还是自己问错。
+
+**修复**：
+
+| 改动 | 说明 |
+|------|------|
+| 新增 `LLMServiceError` / `LLMOutputError` 异常类 | 区分系统错误（API 不可用）和输出错误（JSON 解析失败） |
+| 新增 `_invoke_llm_with_retry` 函数 | 临时性错误（超时/限流/空 content）自动重试 2 次；致命错误立即上抛 |
+| `unified_understand` 系统错误上抛 | 不再返回空壳，让 `main.py` 捕获并返回友好提示 |
+| `main.py` 错误提示友好化 | `LLMServiceError` → "AI 服务暂时不可用，请稍后重试"；`LLMOutputError` → "AI 响应格式异常，请重新描述您的问题" |
+| `lightweight_merge` 失败显式提示 | 失败时在 `enriched_question` 前加 `[补充信息合并失败，请重新描述]`，用户可感知 |
+
+### 5.5 性能验证数据
+
+| 测试项 | 优化前 | 优化后 |
+|--------|--------|--------|
+| 意图理解耗时 | 7.6s ~ 25.3s | 8.71s（JSON mode 开启后稳定） |
+| 向量检索耗时 | 12.9s ~ 26.9s | 6.25s ~ 7.46s |
+| 首 Token 延迟 | 3.3s ~ 52.9s | 3.82s ~ 13.35s |
+| 总响应时间 | 最高 80s+ | 6.49s ~ 15.51s |
+| 会话保存 | `Extra data` 报错 | `Saved messages to session` 正常 |

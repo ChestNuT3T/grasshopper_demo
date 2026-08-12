@@ -18,6 +18,7 @@ RAG_DIR = DATA_DIR / "RAG"
 CHROMA_DIR = DATA_DIR / "chroma_db"
 LOGS_DIR = PROJECT_ROOT / "logs"
 CHAT_HISTORY_DIR = PROJECT_ROOT / "chat_history"
+CHAT_DB_PATH = CHAT_HISTORY_DIR / "chat.db"
 CONFIG_DIR = PROJECT_ROOT / "configs"
 
 PROCESSED_DIR = DATA_DIR / "processed"
@@ -38,7 +39,6 @@ LLM_MODEL = os.getenv("LLM_MODEL", "deepseek-v4-pro")
 LLM_TIMEOUT = int(os.getenv("LLM_TIMEOUT", "120"))
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-v4")
 
-ENABLE_RAG = os.getenv("ENABLE_RAG", "true").lower() == "true"
 DEBUG = os.getenv("DEBUG", "false").lower() == "true"
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 LOG_FILE = str(LOGS_DIR / "app.log")

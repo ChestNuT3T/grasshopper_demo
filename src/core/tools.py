@@ -3,13 +3,11 @@
 import sys
 import json
 import re
-import os
-import time
 from typing import Dict, Any, List
 
 from langchain_core.messages import BaseMessage
-from langchain_community.chat_message_histories import FileChatMessageHistory
 
+from src.core.chat_history import SQLiteChatMessageHistory
 from src.core.logger import logger
 
 
@@ -170,49 +168,16 @@ def safe_print(text: str):
                 pass
 
 
-def cleanup_old_history(history: FileChatMessageHistory, max_age_minutes: int = 30):
+def get_session_history(session_id: str) -> SQLiteChatMessageHistory:
     """
-    清理指定时间之前的历史记录
-    
-    参数:
-        history: FileChatMessageHistory 对象
-        max_age_minutes: 最大保留时间（分钟），默认为30分钟
-    """
-    if not history.messages:
-        return
+    获取会话历史（SQLite 存储，事务安全、并发安全）。
 
-    cutoff_time = time.time() - (max_age_minutes * 60)
-
-    filtered_messages = [
-        msg for msg in history.messages
-        if getattr(msg, 'additional_kwargs', {}).get('timestamp', time.time()) > cutoff_time
-    ]
-
-    history.clear()
-    for msg in filtered_messages:
-        history.add_message(msg)
-
-
-def get_session_history(session_id: str) -> FileChatMessageHistory:
-    """
-    获取会话历史，存储在本地硬盘中
-    
     参数:
         session_id: 会话ID
-        
+
     返回:
-        FileChatMessageHistory 对象
+        SQLiteChatMessageHistory 对象，兼容 langchain BaseChatMessageHistory 接口
     """
-    from config.settings import CHAT_HISTORY_DIR
-    history_dir = str(CHAT_HISTORY_DIR)
-    os.makedirs(history_dir, exist_ok=True)
-
-    file_path = os.path.join(history_dir, f"{session_id}.json")
-
-    history = FileChatMessageHistory(file_path)
-
-    cleanup_old_history(history)
-
+    history = SQLiteChatMessageHistory(session_id)
     logger.info(f"get_session_history - session_id: {session_id}, message_count: {len(history.messages)}")
-
     return history

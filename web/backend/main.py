@@ -28,7 +28,6 @@ API 接口列表：
 
 import json
 import uuid
-from pathlib import Path
 from typing import Dict, List
 
 from fastapi import FastAPI, HTTPException, Query, Body
@@ -49,13 +48,13 @@ from src.modules.retrieval import (
     load_manual_retriever,
 )
 from src.core.tools import get_session_history, get_chat_history
+from src.core.chat_history import list_sessions, delete_session_record
 from src.core.client import create_deepseek_client, get_embeddings
 from src.core.logger import logger
 from config.settings import (
     RAG_ENABLED,
     CHROMA_DIR,
     RETRIEVAL_CONFIG,
-    CHAT_HISTORY_DIR,
 )
 
 
@@ -125,31 +124,13 @@ init_retrievers()
 @app.get("/api/sessions")
 def get_sessions():
     """
-    获取所有会话列表（从 chat_history 目录读取）
-    
-    遍历 CHAT_HISTORY_DIR 目录下的所有 .json 文件，
-    解析每个文件的会话信息，返回会话列表（按修改时间降序排列）。
-    
+    获取所有会话列表（从 SQLite 读取）
+
     返回:
         {"sessions": [{id, name, messageCount, lastModified}, ...]}
     """
-    session_list: List[Dict] = []
-    
-    if CHAT_HISTORY_DIR.exists():
-        for file in CHAT_HISTORY_DIR.glob("*.json"):
-            session_id = file.stem
-            try:
-                history = get_session_history(session_id)
-                messages = get_chat_history(session_id, format_output=False)
-                session_list.append({
-                    "id": session_id,
-                    "name": session_id.replace("_", " ").title(),
-                    "messageCount": len(messages),
-                    "lastModified": file.stat().st_mtime,
-                })
-            except Exception as e:
-                logger.warning(f"Failed to load session {session_id}: {e}")
-    
+    session_list = list_sessions()
+
     # 如果没有会话，返回默认会话
     if not session_list:
         session_list.append({
@@ -158,28 +139,28 @@ def get_sessions():
             "messageCount": 0,
             "lastModified": 0,
         })
-    
-    return {"sessions": sorted(session_list, key=lambda x: x["lastModified"], reverse=True)}
+
+    return {"sessions": session_list}
 
 
 @app.post("/api/sessions")
 def create_session(body: Dict = Body(...)):
     """
-    创建新会话
-    
+    创建新会话（SQLite 写入 sessions 表）
+
     参数:
         name: 会话名称（可选），不提供则自动生成 UUID 前8位
-    
+
     返回:
         {"id": session_id, "name": session_name, "messageCount": 0, "lastModified": 0}
     """
     name = body.get("name")
     session_id = str(uuid.uuid4())[:8] if name is None else name.replace(" ", "_")
-    
-    # 创建空的会话历史文件
-    history = get_session_history(session_id)
+
+    # 创建会话记录（SQLiteChatMessageHistory 构造时自动写入 sessions 表）
+    get_session_history(session_id)
     logger.info(f"Created new session: {session_id}")
-    
+
     return {
         "id": session_id,
         "name": name or session_id.replace("_", " ").title(),
@@ -191,11 +172,11 @@ def create_session(body: Dict = Body(...)):
 @app.get("/api/sessions/{session_id}/messages")
 def get_session_messages(session_id: str):
     """
-    获取会话历史消息（从文件存储读取）
-    
+    获取会话历史消息（从 SQLite 读取）
+
     参数:
         session_id: 会话 ID
-    
+
     返回:
         {"messages": [{id, role, content, reasoning, trace, createdAt}, ...]}
     """
@@ -205,18 +186,17 @@ def get_session_messages(session_id: str):
         for i, msg in enumerate(messages):
             role = 'user' if hasattr(msg, 'type') and msg.type == 'human' else 'assistant'
             content = getattr(msg, 'content', '')
-            reasoning = getattr(msg, 'reasoning', '')
-            # 从 additional_kwargs 中提取 reasoning（兼容新的存储方式）
-            if not reasoning and hasattr(msg, 'additional_kwargs'):
-                reasoning = msg.additional_kwargs.get('reasoning', '')
-            trace = getattr(msg, 'trace', None)
+            additional_kwargs = getattr(msg, 'additional_kwargs', {}) or {}
+            reasoning = additional_kwargs.get('reasoning', '')
+            trace = additional_kwargs.get('trace')
+            created_at = additional_kwargs.get('created_at', 0)
             formatted_messages.append({
                 "id": f"msg_{i}",
                 "role": role,
                 "content": content,
                 "reasoning": reasoning,
                 "trace": trace,
-                "createdAt": getattr(msg, 'created_at', 0)
+                "createdAt": created_at,
             })
         return {"messages": formatted_messages}
     except Exception as e:
@@ -248,18 +228,16 @@ def clear_session_messages(session_id: str):
 @app.delete("/api/sessions/{session_id}")
 def delete_session(session_id: str):
     """
-    删除会话（删除对应的 json 文件）
-    
+    删除会话（SQLite 级联删除会话记录与消息）
+
     参数:
         session_id: 会话 ID
-    
+
     返回:
         {"success": True/False, "error": 错误信息（可选）}
     """
     try:
-        history_file = CHAT_HISTORY_DIR / f"{session_id}.json"
-        if history_file.exists():
-            history_file.unlink()
+        if delete_session_record(session_id):
             logger.info(f"Deleted session: {session_id}")
             return {"success": True}
         raise HTTPException(status_code=404, detail="会话不存在")
@@ -386,7 +364,15 @@ def generate_stream_response(user_input: str, session_id: str, rag_enabled: bool
     
     except Exception as e:
         logger.error(f"Stream generation failed: {e}", exc_info=True)
-        error_chunk = {"type": "error", "content": f"抱歉，生成响应时出错：{str(e)}"}
+        # 区分系统错误和业务错误，给用户友好提示
+        error_type = type(e).__name__
+        if "LLMServiceError" in error_type or "Service" in error_type:
+            user_msg = "AI 服务暂时不可用，请稍后重试。"
+        elif "LLMOutputError" in error_type:
+            user_msg = "AI 响应格式异常，请重新描述您的问题。"
+        else:
+            user_msg = f"生成响应时出错：{str(e)}"
+        error_chunk = {"type": "error", "content": user_msg}
         yield f"data: {json.dumps(error_chunk, ensure_ascii=False)}\n\n"
 
 
